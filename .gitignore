@@ -1,0 +1,9 @@
+key-pair*
+.terraform*
+*tfstate*
+.terraform/*
+*.terraform*
+
+.DS_Store
+**/.DS_Store**
+.idea/*
