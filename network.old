@@ -30,6 +30,17 @@ resource "aws_subnet" "public_subnets" {
   }
 }
 
+# resource "aws_subnet" "public_subnet_2" {
+#   vpc_id                  = aws_vpc.iac_lab_vpc.id
+#   cidr_block              = var.subnet2_cidr
+#   availability_zone       = data.aws_availability_zones.available.names[1]
+#   map_public_ip_on_launch = true
+#
+#   tags = {
+#     Name = format("%s-public-subnet-2", var.prefix)
+#   }
+# }
+
 # PRIVATE SUBNETS
 resource "aws_subnet" "private_subnets" {
   count = var.number_of_private_subnets
@@ -43,6 +54,16 @@ resource "aws_subnet" "private_subnets" {
   }
 }
 
+# resource "aws_subnet" "private_subnet_2" {
+#   vpc_id            = aws_vpc.iac_lab_vpc.id
+#   cidr_block        = var.subnet4_cidr
+#   availability_zone = data.aws_availability_zones.available.names[1]
+#
+#   tags = {
+#     Name = format("%s-private-subnet-2", var.prefix)
+#   }
+# }
+
 # SECURE SUBNETS
 resource "aws_subnet" "secure_subnets" {
   count = var.number_of_secure_subnets
@@ -55,6 +76,41 @@ resource "aws_subnet" "secure_subnets" {
     Name = format("${var.prefix}-secure-subnet-%s", count.index + 1)
   }
 }
+
+# resource "aws_subnet" "secure_subnet_2" {
+#   vpc_id            = aws_vpc.iac_lab_vpc.id
+#   cidr_block        = var.subnet6_cidr
+#   availability_zone = data.aws_availability_zones.available.names[1]
+#
+#   tags = {
+#     Name = format("%s-secure-subnet-2", var.prefix)
+#   }
+# }
+
+# IMPORTED SUBNET
+# resource "aws_subnet" "subnet_7_moved" {
+#   # Write all configuration arguments here (e.g., vpc_id, cidr_block, availability_zone).
+#   # These arguments MUST match the existing subnet's properties.
+#   vpc_id                  = aws_vpc.iac_lab_vpc.id
+#   cidr_block              = "192.168.1.96/28"
+#   availability_zone       = "eu-central-1a"
+#
+#   tags = {
+#     Name = "subnet_7"
+#   }
+# }
+
+# import {
+#   # The resource defined above
+#   to = aws_subnet.subnet_7
+#   # The actual ID of the live subnet in your AWS account
+#   id = "subnet-05780f524174e204e"
+# }
+
+# moved {
+#   from = aws_subnet.subnet_7
+#   to   = aws_subnet.subnet_7_moved
+# }
 
 # ADDING INTERNET GATEWAY
 resource "aws_internet_gateway" "iac_lab_igw" {
@@ -120,6 +176,11 @@ resource "aws_route_table_association" "public_subnets_assoc" {
   route_table_id = aws_route_table.public_rt.id
 }
 
+# resource "aws_route_table_association" "public_subnet_2_assoc" {
+#   subnet_id      = aws_subnet.public_subnets[1].id
+#   route_table_id = aws_route_table.public_rt.id
+# }
+
 # ADDING A PRIVATE SUBNET ASSOCIATIONS
 resource "aws_route_table_association" "private_subnets_assoc" {
   count = var.number_of_private_subnets
@@ -127,3 +188,8 @@ resource "aws_route_table_association" "private_subnets_assoc" {
   subnet_id      = aws_subnet.private_subnets[count.index].id
   route_table_id = aws_route_table.private_rt.id
 }
+
+# resource "aws_route_table_association" "private_subnet_2_assoc" {
+#   subnet_id      = aws_subnet.private_subnets[1].id
+#   route_table_id = aws_route_table.private_rt.id
+# }

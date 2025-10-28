@@ -8,6 +8,10 @@ resource "aws_s3_bucket" "tfstate_backend" {
   tags = {
     Name = "${var.prefix}-tfstate"
   }
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 # Enable bucket versioning

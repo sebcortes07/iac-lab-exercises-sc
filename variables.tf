@@ -42,3 +42,21 @@ variable "subnet6_cidr" {
   type        = string
   description = "CIDR block for the sixth subnet"
 }
+
+variable "number_of_public_subnets" {
+  type        = number
+  description = "number of public subnets"
+  default     = 2
+}
+
+variable "number_of_private_subnets" {
+  type        = number
+  description = "number of private subnets"
+  default     = 2
+}
+
+variable "number_of_secure_subnets" {
+  type        = number
+  description = "number of secure subnets"
+  default     = 2
+}
