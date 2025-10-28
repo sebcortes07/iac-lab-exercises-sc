@@ -81,6 +81,31 @@ resource "aws_subnet" "secure_subnet_2" {
   }
 }
 
+# IMPORTED SUBNET
+# resource "aws_subnet" "subnet_7_moved" {
+#   # Write all configuration arguments here (e.g., vpc_id, cidr_block, availability_zone).
+#   # These arguments MUST match the existing subnet's properties.
+#   vpc_id                  = aws_vpc.iac_lab_vpc.id
+#   cidr_block              = "192.168.1.96/28"
+#   availability_zone       = "eu-central-1a"
+#
+#   tags = {
+#     Name = "subnet_7"
+#   }
+# }
+
+# import {
+#   # The resource defined above
+#   to = aws_subnet.subnet_7
+#   # The actual ID of the live subnet in your AWS account
+#   id = "subnet-05780f524174e204e"
+# }
+
+# moved {
+#   from = aws_subnet.subnet_7
+#   to   = aws_subnet.subnet_7_moved
+# }
+
 # ADDING INTERNET GATEWAY
 resource "aws_internet_gateway" "iac_lab_igw" {
   vpc_id = aws_vpc.iac_lab_vpc.id

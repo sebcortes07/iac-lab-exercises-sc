@@ -3,7 +3,8 @@ terraform {
     bucket         = "sc-iac-lab-tfstate"
     key            = "sc-iac-lab-tfstate/terraform.tfstate"
     region         = "eu-central-1"
-    dynamodb_table = "sc-iac-lab-tfstate-locks"
+    // dynamodb_table = "sc-iac-lab-tfstate-locks"
     encrypt        = true
+    use_lockfile = true // Enable S3-native locking
   }
 }
