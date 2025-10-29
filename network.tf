@@ -1,5 +1,5 @@
 # creation of the vpc
-resource "aws_vpc" "iac_lab_vpc" {
+resource "aws_vpc" "main" {
   cidr_block           = var.vpc_cidr
   enable_dns_support   = true
   enable_dns_hostnames = true
@@ -20,7 +20,7 @@ data "aws_availability_zones" "available" {
 resource "aws_subnet" "public_subnets" {
   count = var.number_of_public_subnets
 
-  vpc_id                  = aws_vpc.iac_lab_vpc.id
+  vpc_id                  = aws_vpc.main.id
   cidr_block              = cidrsubnet(var.vpc_cidr, 3, count.index)
   availability_zone       = data.aws_availability_zones.available.names[count.index]
   map_public_ip_on_launch = true
@@ -34,7 +34,7 @@ resource "aws_subnet" "public_subnets" {
 resource "aws_subnet" "private_subnets" {
   count = var.number_of_private_subnets
 
-  vpc_id            = aws_vpc.iac_lab_vpc.id
+  vpc_id            = aws_vpc.main.id
   cidr_block        = cidrsubnet(var.vpc_cidr, 3, count.index + 2)
   availability_zone = data.aws_availability_zones.available.names[count.index]
 
@@ -47,7 +47,7 @@ resource "aws_subnet" "private_subnets" {
 resource "aws_subnet" "secure_subnets" {
   count = var.number_of_secure_subnets
 
-  vpc_id            = aws_vpc.iac_lab_vpc.id
+  vpc_id            = aws_vpc.main.id
   cidr_block        = cidrsubnet(var.vpc_cidr, 3, count.index + 4)
   availability_zone = data.aws_availability_zones.available.names[count.index]
 
@@ -58,7 +58,7 @@ resource "aws_subnet" "secure_subnets" {
 
 # ADDING INTERNET GATEWAY
 resource "aws_internet_gateway" "iac_lab_igw" {
-  vpc_id = aws_vpc.iac_lab_vpc.id
+  vpc_id = aws_vpc.main.id
 
   tags = {
     Name = format("%s-igw", var.prefix)
@@ -86,7 +86,7 @@ resource "aws_nat_gateway" "iac_lab_nat_gw" {
 
 # ADDING A PUBLIC ROUTE TABLE
 resource "aws_route_table" "public_rt" {
-  vpc_id = aws_vpc.iac_lab_vpc.id
+  vpc_id = aws_vpc.main.id
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -100,7 +100,7 @@ resource "aws_route_table" "public_rt" {
 
 # ADDING A PRIVATE ROUTE TABLE
 resource "aws_route_table" "private_rt" {
-  vpc_id = aws_vpc.iac_lab_vpc.id
+  vpc_id = aws_vpc.main.id
 
   route {
     cidr_block     = "0.0.0.0/0"
