@@ -2,7 +2,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "5.81.0"
+      version = ">= 6.0"
     }
   }
 }
@@ -13,7 +13,7 @@ resource "aws_lb" "lb" {
   security_groups    = [aws_security_group.lb_sg.id]
 
   # Collect all public subnet IDs from aws_subnet.public_subnets (works for both count and for_each)
-  subnets = [for s in aws_subnet.public_subnets : s.id]
+  subnets = module.vpc.public_subnets
 
   tags = {
     Name = format("%s-lb", var.prefix)
@@ -24,7 +24,7 @@ resource "aws_lb_target_group" "tg" {
   name        = format("%s-lb-tg", var.prefix)
   port        = 8000
   protocol    = "HTTP"
-  vpc_id      = aws_vpc.vpc.id
+  vpc_id      = module.vpc.vpc_id
   target_type = "ip"
 
   health_check {
@@ -57,7 +57,7 @@ resource "aws_lb_listener" "lb_listener" {
 resource "aws_security_group" "lb_sg" {
   name        = format("%s-lb-sg", var.prefix)
   description = "Security group for the application Load Balancer - allows HTTP and app traffic"
-  vpc_id      = aws_vpc.vpc.id
+  vpc_id      = module.vpc.vpc_id
 
   # Allow HTTP from anywhere
   ingress {
