@@ -7,7 +7,7 @@ data "aws_availability_zones" "available" {
 # Route Tables, and Associations automatically.
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "6.5.0"
+  version = "~> 5.0"
 
   name = format("%s-vpc", var.prefix)
   cidr = var.vpc_cidr
@@ -23,7 +23,7 @@ module "vpc" {
   private_subnets = [
     for i in range(var.number_of_private_subnets) : cidrsubnet(var.vpc_cidr, 3, i + var.number_of_public_subnets)
   ]
-  database_subnets = [
+  intra_subnets = [
     for i in range(var.number_of_secure_subnets) : cidrsubnet(var.vpc_cidr, 3, i + var.number_of_public_subnets + var.number_of_private_subnets)
   ]
 
