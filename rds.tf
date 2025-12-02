@@ -5,13 +5,14 @@ resource "aws_db_instance" "database" {
   identifier             = format("%s-db", var.prefix)
   instance_class         = "db.t3.small"
   db_subnet_group_name   = aws_db_subnet_group.RDS_subnet_grp.name
-  parameter_group_name      = aws_db_parameter_group.pg.name
+  parameter_group_name   = aws_db_parameter_group.pg.name
   vpc_security_group_ids = [aws_security_group.rds.id]
   db_name                = var.db_name
   username               = var.db_username
   password               = jsondecode(data.aws_secretsmanager_secret_version.db.secret_string)["db_password"]
   skip_final_snapshot    = true
 }
+
 
 resource "aws_db_subnet_group" "RDS_subnet_grp" {
   subnet_ids = module.vpc.intra_subnets
@@ -28,15 +29,15 @@ resource "aws_db_parameter_group" "pg" {
 }
 
 data "aws_secretsmanager_secret" "db" {
-  name = "dev/dbsc"
+  name = "dev/dbjc"
 }
 
 data "aws_secretsmanager_secret_version" "db" {
-  secret_id     = data.aws_secretsmanager_secret.db.id
+  secret_id = data.aws_secretsmanager_secret.db.id
 }
 
 resource "aws_security_group" "rds" {
-  name = format("%s-db-sg", var.prefix)
+  name   = format("%s-db-sg", var.prefix)
   vpc_id = module.vpc.vpc_id
   ingress {
     from_port       = 5432

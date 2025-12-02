@@ -1,10 +1,9 @@
 terraform {
   backend "s3" {
-    bucket = "sc-iac-lab-tfstate"
-    key    = "eu-central-1/sc-iac-lab-tfstate/terraform.tfstate"
-    region = "eu-central-1"
-    // dynamodb_table = "sc-iac-lab-tfstate-locks"
+    bucket       = "iac-lab-jc-tfstate"
+    key          = "eu-central-1/iac-lab-jc/terraform.tfstate"
+    region       = "eu-central-1"
     encrypt      = true
-    use_lockfile = true // Enable S3-native locking
+    use_lockfile = true
   }
 }
