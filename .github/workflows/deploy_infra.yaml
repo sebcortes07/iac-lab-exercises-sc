@@ -1,0 +1,57 @@
+name: Deploy Infra
+
+on: workflow_dispatch
+
+env:
+  AWS_REGION: eu-central-1
+  IAM_ROLE: arn:aws:iam::160071257600:role/iac-lab-sc-github-actions-role
+  TERRAFORM_VERSION: 1.11.2
+
+jobs:
+
+  # Can add extra jobs/steps to run any pre deploy tasks
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@2ec54502e3e7b5d9591613811da6daded35caa19
+        with:
+          role-session-name: GitHubActionsSession
+          role-to-assume: ${{ env.IAM_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Get aws identity
+        run: |
+          aws sts get-caller-identity            
+
+      # Can add extra steps to run Terraform to create the AWS resources
+      ## 🛠️ Install Terraform
+      - name: Setup Terraform
+        # Use the official HashiCorp setup-terraform action
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+      ## 🚀 Terraform Workflow
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Plan
+        id: plan
+        # Use the -var-file flag to specify the variables file
+        run: terraform plan -var-file="dev.tfvars" -no-color
+
+      - name: Terraform Apply
+        id: apply
+        # Use the -auto-approve flag for non-interactive deployment
+        run: terraform apply -var-file="dev.tfvars" -auto-approve
